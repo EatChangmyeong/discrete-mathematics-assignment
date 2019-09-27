@@ -10,6 +10,6 @@ int main(int argc, char **argv) {
 		}
 	}
 	printf("= %d\n", sum);
-	printf("[ 20196045 LeeSangmyeong :3 ]");
+	printf("[ 20196045 LeeSangmyeong :3 ]\n");
 	return 0; 
 }
