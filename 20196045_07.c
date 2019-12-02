@@ -2,8 +2,8 @@
  * 20196045_07.c: (c) 2019 EatChangmyeong
  * 
  * This C program reads a file, scans every word contained in it
- * (delimited by non-alphanumeric characters) and writes the word count statistics
- * into a given file.
+ * (delimited by non-alphanumeric characters) and writes occurrence of
+ * each of them into a given file.
  * 
  * In this implementation, I stored dictionary words in a linked list
  * to work with unknown and hard-to-predict number of different words.
@@ -14,7 +14,7 @@
  * The first, naive implementation takes approximately 30~70 seconds
  * to scan a 6+MB input with ~1.12M words.
  * 
- * Then, I tried sorting the dictionary by word count in descending order
+ * Then, I tried sorting the dictionary by their occurrences in descending order
  * every 100K words, so that frequently used words are more quickly found
  * in linked list search. and the result is also neatly sorted.
  * This implementation takes approximately ~85 seconds, so I decided to
@@ -60,7 +60,7 @@ char* strtok_alphanumeric(char *str) { // strtok by non-alphanumeric
 
 void pushWord(char *str) { // Push a word into the dictionary
 	dictElem *dp = dict, *dprev = NULL, *dn;
-	while(dp) {
+	while(dp) { // Look for a matching string
 		if(!strcmp(dp->word, str)) {
 			dp->count++;
 			return;
@@ -69,6 +69,7 @@ void pushWord(char *str) { // Push a word into the dictionary
 		dp = dp->next;
 	}
 	
+	// Append a new element
 	dn = malloc(sizeof(dictElem));
 	dn->word = str;
 	dn->count = 1;
@@ -85,15 +86,15 @@ void pushWord(char *str) { // Push a word into the dictionary
 int sorter(const void *a, const void *b) {
 	return (*(dictElem**)b)->count - (*(dictElem**)a)->count;
 }
-void sortDict() {
+void sortDict() { // Sort by occurrences
 	dictElem **lst = malloc(dictSize*sizeof(dictElem*)), *dp = dict;
 	int i;
-	for(i = 0; i < dictSize; i++) {
+	for(i = 0; i < dictSize; i++) { // Map the linked list into an array
 		lst[i] = dp;
 		dp = dp->next;
 	}
 	qsort(lst, dictSize, sizeof(dictElem*), sorter);
-	for(i = 0; i < dictSize; i++)
+	for(i = 0; i < dictSize; i++) // Relink the list
 		lst[i]->next = i == dictSize - 1 ? NULL : lst[i + 1];
 	dict = lst[0];
 }
